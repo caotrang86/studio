@@ -5,6 +5,7 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../db');
 const { requireAuth } = require('../middleware/auth');
+const { PROCESSORS } = require('../processors');
 
 const router = express.Router();
 
@@ -22,7 +23,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 20 * 1024 * 1024 }, // 20 MB
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB
   fileFilter: (req, file, cb) => {
     const allowed = /\.(jpg|jpeg|png|webp|gif|mp4|mov|webm|mp3|wav|ogg|aac|flac|txt)$/i;
     if (allowed.test(path.extname(file.originalname))) {
@@ -79,7 +80,7 @@ router.get('/', (req, res) => {
 });
 
 // ── POST /api/apps/:slug/process — submit a job ───────────────────
-router.post('/:slug/process', requireAuth, upload.single('file'), (req, res) => {
+router.post('/:slug/process', requireAuth, upload.single('file'), async (req, res) => {
   const { slug } = req.params;
   const creditsNeeded = APP_CREDITS[slug];
 
@@ -100,7 +101,8 @@ router.post('/:slug/process', requireAuth, upload.single('file'), (req, res) => 
   }
 
   const jobId = uuidv4();
-  const inputPath = `/uploads/${req.file.filename}`;
+  const inputWebPath = `/uploads/${req.file.filename}`;
+  const inputAbsPath = path.join(uploadsDir, req.file.filename);
 
   // Deduct credits
   db.prepare('UPDATE users SET credits = credits - ?, updated_at = datetime(\'now\') WHERE id = ?')
@@ -111,22 +113,62 @@ router.post('/:slug/process', requireAuth, upload.single('file'), (req, res) => 
     VALUES (?, ?, ?, ?, ?)
   `).run(uuidv4(), req.user.id, -creditsNeeded, 'usage', `Sử dụng: ${slug}`);
 
-  // Create job — in a real system this would queue async processing.
-  // For now, immediately mark done and return the input as "output" (stub).
+  // Create job as processing
   db.prepare(`
     INSERT INTO jobs (id, user_id, app_slug, status, input_file, output_file, credits_used)
     VALUES (?, ?, ?, ?, ?, ?, ?)
-  `).run(jobId, req.user.id, slug, 'done', inputPath, inputPath, creditsNeeded);
+  `).run(jobId, req.user.id, slug, 'processing', inputWebPath, null, creditsNeeded);
 
-  const updatedUser = db.prepare('SELECT credits FROM users WHERE id = ?').get(req.user.id);
+  try {
+    const processor = PROCESSORS[slug];
+    if (!processor) {
+      throw new Error('Processor not found for: ' + slug);
+    }
 
-  res.json({
-    job_id: jobId,
-    status: 'done',
-    output_url: inputPath,
-    credits_remaining: updatedUser.credits,
-    message: `Xử lý thành công! (demo — kết nối AI API thật để có kết quả thực)`,
-  });
+    // Parse processing options from request body
+    const options = {};
+    if (req.body.start) options.start = parseFloat(req.body.start);
+    if (req.body.end) options.end = parseFloat(req.body.end);
+
+    const outputAbsPath = await processor(inputAbsPath, options);
+    const outputWebPath = '/uploads/' + path.basename(outputAbsPath);
+
+    // Update job as done
+    db.prepare('UPDATE jobs SET status = ?, output_file = ? WHERE id = ?')
+      .run('done', outputWebPath, jobId);
+
+    const updatedUser = db.prepare('SELECT credits FROM users WHERE id = ?').get(req.user.id);
+
+    res.json({
+      job_id: jobId,
+      status: 'done',
+      output_url: outputWebPath,
+      credits_remaining: updatedUser.credits,
+      message: 'Xử lý thành công!',
+    });
+  } catch (err) {
+    console.error(`Processing error [${slug}]:`, err.message);
+
+    // Update job as failed
+    db.prepare('UPDATE jobs SET status = ? WHERE id = ?')
+      .run('failed', jobId);
+
+    // Refund credits on failure
+    db.prepare('UPDATE users SET credits = credits + ?, updated_at = datetime(\'now\') WHERE id = ?')
+      .run(creditsNeeded, req.user.id);
+    db.prepare(`
+      INSERT INTO credit_transactions (id, user_id, amount, type, description)
+      VALUES (?, ?, ?, ?, ?)
+    `).run(uuidv4(), req.user.id, creditsNeeded, 'refund', `Hoàn credits: ${slug} (lỗi xử lý)`);
+
+    const updatedUser = db.prepare('SELECT credits FROM users WHERE id = ?').get(req.user.id);
+
+    res.status(500).json({
+      error: 'Xử lý thất bại: ' + err.message,
+      credits_remaining: updatedUser.credits,
+      message: 'Credits đã được hoàn lại.',
+    });
+  }
 });
 
 // ── GET /api/apps/:slug/info ───────────────────────────────────────
