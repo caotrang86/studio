@@ -19,11 +19,30 @@ function toWebUrl(absPath) {
   return '/uploads/' + path.basename(absPath);
 }
 
+function requireFfmpeg() {
+  if (global.__dependencies && !global.__dependencies.ffmpeg) {
+    throw new Error('ffmpeg chưa được cài đặt. Cài đặt: Windows: choco install ffmpeg | Mac: brew install ffmpeg | Linux: sudo apt install ffmpeg');
+  }
+}
+
+function requireYtdlp() {
+  if (global.__dependencies && !global.__dependencies.ytdlp) {
+    throw new Error('yt-dlp chưa được cài đặt. Cài đặt: pip install yt-dlp');
+  }
+}
+
 function ffmpegPromise(command) {
+  requireFfmpeg();
   return new Promise((resolve, reject) => {
     command
       .on('end', resolve)
-      .on('error', reject)
+      .on('error', (err) => {
+        if (err.message && err.message.includes('ENOENT')) {
+          reject(new Error('ffmpeg chưa được cài đặt trên máy. Cài đặt: Windows: choco install ffmpeg | Mac: brew install ffmpeg | Linux: sudo apt install ffmpeg'));
+        } else {
+          reject(err);
+        }
+      })
       .run();
   });
 }
@@ -450,6 +469,7 @@ async function ghepMp3(inputPaths) {
 // ─── DOWNLOAD PROCESSORS ─────────────────────────────────────────────
 
 async function downloadUrls(inputPath, platform) {
+  requireYtdlp();
   const out = outPath('.zip');
   const content = fs.readFileSync(inputPath, 'utf8');
   const urls = content.split('\n').map(u => u.trim()).filter(u => u.length > 0 && u.startsWith('http'));
@@ -522,9 +542,15 @@ async function downloadUrls(inputPath, platform) {
 // ─── HELPERS ─────────────────────────────────────────────────────────
 
 function getMediaDuration(filePath) {
+  requireFfmpeg();
   return new Promise((resolve, reject) => {
     ffmpeg.ffprobe(filePath, (err, metadata) => {
-      if (err) return reject(err);
+      if (err) {
+        if (err.message && err.message.includes('ENOENT')) {
+          return reject(new Error('ffmpeg/ffprobe chưa được cài đặt trên máy'));
+        }
+        return reject(err);
+      }
       resolve(metadata.format.duration || 0);
     });
   });
