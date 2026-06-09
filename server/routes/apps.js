@@ -24,7 +24,7 @@ const upload = multer({
   storage,
   limits: { fileSize: 20 * 1024 * 1024 }, // 20 MB
   fileFilter: (req, file, cb) => {
-    const allowed = /\.(jpg|jpeg|png|webp|gif|mp4|mov|webm)$/i;
+    const allowed = /\.(jpg|jpeg|png|webp|gif|mp4|mov|webm|mp3|wav|ogg|aac|flac|txt)$/i;
     if (allowed.test(path.extname(file.originalname))) {
       cb(null, true);
     } else {
@@ -58,6 +58,14 @@ const APP_CREDITS = {
   'ai-nhay-tu-nen-anh': 3,
   'ai-clone-video-aff': 5,
   'xoa-watermark':      1,
+  'lam-net-video':      2,
+  'tai-tiktok':         1,
+  'tai-facebook':       1,
+  'tai-youtube':        1,
+  'cat-video':          1,
+  'ghep-video':         1,
+  'cat-mp3':            1,
+  'ghep-mp3':           1,
 };
 
 // ── GET /api/apps — list all apps ──────────────────────────────────
