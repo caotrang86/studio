@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Đăng ký | CaoTrangAI</title>
+  <link rel="stylesheet" href="/_next/static/chunks/0u86oo_rl9-1.css">
+  <link rel="stylesheet" href="/_next/static/chunks/0ej2iye1u9t1_.css">
+  <link rel="shortcut icon" href="/logo.png">
+  <link rel="icon" href="/logo.png">
+  <style>
+    body { margin: 0; font-family: Inter, system-ui, -apple-system, sans-serif; }
+    .register-bg {
+      min-height: 100vh;
+      display: flex;
+      background: #0C1117;
+      color: #e2e8f0;
+    }
+    .register-showcase {
+      display: none;
+      width: 55%;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0f1923 0%, #0C1117 100%);
+    }
+    @media (min-width: 1024px) { .register-showcase { display: flex; align-items: center; justify-content: center; } }
+    .register-showcase::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, transparent 60%, #0C1117);
+      z-index: 1;
+    }
+    .showcase-content {
+      position: relative;
+      z-index: 2;
+      padding: 60px;
+      max-width: 500px;
+    }
+    .showcase-content h2 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #22d3ee, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .showcase-content p { color: #94a3b8; font-size: 16px; line-height: 1.6; }
+    .feature-list { list-style: none; padding: 0; margin-top: 24px; }
+    .feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      color: #cbd5e1;
+      font-size: 15px;
+    }
+    .feature-list li::before {
+      content: '✦';
+      color: #22d3ee;
+      font-size: 14px;
+    }
+    .register-form-side {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+    }
+    .register-card {
+      width: 100%;
+      max-width: 420px;
+    }
+    .register-card h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .register-card .subtitle { color: #94a3b8; margin-bottom: 32px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      background: #1a1f2e;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+    }
+    .form-group input:focus { border-color: #22d3ee; }
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #06b6d4, #0ea5e9);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .error-msg {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      display: none;
+    }
+    .switch-link {
+      text-align: center;
+      margin-top: 24px;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    .switch-link a { color: #22d3ee; text-decoration: none; }
+    .switch-link a:hover { text-decoration: underline; }
+    .logo-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 40px;
+      text-decoration: none;
+      color: #fff;
+    }
+    .logo-link img { width: 36px; height: 36px; }
+    .logo-link span { font-size: 20px; font-weight: 700; }
+    .bonus-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(167, 139, 250, 0.15));
+      border: 1px solid rgba(34, 211, 238, 0.3);
+      color: #22d3ee;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="register-bg">
+    <div class="register-showcase">
+      <div class="showcase-content">
+        <h2>Sáng tạo không giới hạn</h2>
+        <p>Tham gia cộng đồng 10,000+ creator Việt Nam sử dụng AI để tạo nội dung chất lượng cao.</p>
+        <ul class="feature-list">
+          <li>24+ công cụ AI (xóa nền, tạo video, nâng cấp 4K...)</li>
+          <li>Tặng 10 credits miễn phí khi đăng ký</li>
+          <li>Giao diện tiếng Việt, dễ sử dụng</li>
+          <li>Giá rẻ nhất Việt Nam từ 99.000đ</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="register-form-side">
+      <div class="register-card">
+        <a href="/" class="logo-link">
+          <img src="/icon.png" alt="Logo">
+          <span>CaoTrangAI</span>
+        </a>
+
+        <span class="bonus-badge">Tặng 10 credits miễn phí</span>
+
+        <h1>Tạo tài khoản</h1>
+        <p class="subtitle">Bắt đầu tạo ảnh & video AI trong vài giây.</p>
+
+        <div id="error-msg" class="error-msg"></div>
+
+        <form id="register-form" autocomplete="on">
+          <div class="form-group">
+            <label for="name">Tên hiển thị</label>
+            <input type="text" id="name" name="name" placeholder="Nguyễn Văn A" autofocus>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Mật khẩu</label>
+            <input type="password" id="password" name="password" placeholder="Tối thiểu 6 ký tự" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label for="password2">Nhập lại mật khẩu</label>
+            <input type="password" id="password2" name="password2" placeholder="Nhập lại mật khẩu" required minlength="6">
+          </div>
+          <button type="submit" class="btn-primary" id="submit-btn">Tạo tài khoản</button>
+        </form>
+
+        <div class="switch-link">
+          Đã có tài khoản? <a href="/login">Đăng nhập</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var form = document.getElementById('register-form');
+    var errorEl = document.getElementById('error-msg');
+    var submitBtn = document.getElementById('submit-btn');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      errorEl.style.display = 'none';
+
+      var name = document.getElementById('name').value;
+      var email = document.getElementById('email').value;
+      var password = document.getElementById('password').value;
+      var password2 = document.getElementById('password2').value;
+
+      if (password !== password2) {
+        errorEl.textContent = 'Mật khẩu nhập lại không khớp';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Đang tạo tài khoản...';
+
+      fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ email: email, password: password, name: name }),
+      })
+        .then(function (r) { return r.json().then(function (d) { return { status: r.status, data: d }; }); })
+        .then(function (r) {
+          if (r.status === 200) {
+            localStorage.setItem('studio_token', r.data.token);
+            window.location.href = '/apps';
+          } else {
+            errorEl.textContent = r.data.error || 'Đăng ký thất bại';
+            errorEl.style.display = 'block';
+          }
+        })
+        .catch(function () {
+          errorEl.textContent = 'Lỗi kết nối server';
+          errorEl.style.display = 'block';
+        })
+        .finally(function () {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Tạo tài khoản';
+        });
+    });
+  </script>
+</body>
+</html>

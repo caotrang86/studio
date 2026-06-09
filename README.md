@@ -1,8 +1,8 @@
-# Trạm Sáng Tạo — Static Site Clone
+# CaoTrangAI — Static Site Clone
 
-Bản sao tĩnh (static mirror) của website **https://tramsangtao.com** — toàn bộ giao diện, hình ảnh, video, font và CSS được tải về local để chạy độc lập trên bất kỳ web server nào, không phụ thuộc vào server gốc.
+Bản sao tĩnh (static mirror) của website **https://caotrangai.com** — toàn bộ giao diện, hình ảnh, video, font và CSS được tải về local để chạy độc lập trên bất kỳ web server nào, không phụ thuộc vào server gốc.
 
-A self-contained static clone of **https://tramsangtao.com**. All HTML, CSS, images, videos and fonts are bundled locally so it runs on any static web server with no backend.
+A self-contained static clone of **https://caotrangai.com**. All HTML, CSS, images, videos and fonts are bundled locally so it runs on any static web server with no backend.
 
 ---
 
@@ -85,11 +85,11 @@ Mỗi route là một thư mục chứa `index.html`, nên link nội bộ (vd `
 
 - ✅ Toàn bộ các trang hiển thị **giống hệt** bản gốc: layout, ảnh, video, font, màu sắc, hiệu ứng CSS.
 - ✅ Điều hướng giữa các trang (menu, link) hoạt động bình thường.
-- ⚠️ Các tính năng cần **backend** của Trạm Sáng Tạo (đăng nhập, tạo ảnh/video AI, thanh toán, API) **không hoạt động** — vì chúng cần server và tài khoản gốc.
+- ⚠️ Các tính năng cần **backend** của CaoTrangAI (đăng nhập, tạo ảnh/video AI, thanh toán, API) **không hoạt động** — vì chúng cần server và tài khoản gốc.
 - ℹ️ Phần JavaScript ứng dụng gốc (Next.js) đã được loại bỏ để trang **chạy ổn định, không lỗi** khi không có backend. Vì vậy một số widget tương tác (accordion FAQ, tab, menu mobile) ở dạng tĩnh.
 
 This is a **visual/frontend mirror**. Page navigation works; backend-dependent features (login, AI generation, payment, API) do not, since they require the original server.
 
 ---
 
-*Nguồn / Source: https://tramsangtao.com*
+*Nguồn / Source: https://caotrangai.com*
