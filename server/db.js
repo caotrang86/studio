@@ -62,7 +62,7 @@ if (!adminExists) {
   db.prepare(`
     INSERT INTO users (id, email, password_hash, name, role, credits)
     VALUES (?, ?, ?, ?, ?, ?)
-  `).run(adminId, 'admin@tramsangtao.com', hash, 'Admin', 'admin', 99999);
+  `).run(adminId, 'admin@caotrangai.com', hash, 'Admin', 'admin', 99999);
 
   db.prepare(`
     INSERT INTO credit_transactions (id, user_id, amount, type, description)

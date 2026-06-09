@@ -1,7 +1,7 @@
 {
   "name": "studio",
   "version": "1.0.0",
-  "description": "Trạm Sáng Tạo — AI Content Creation Platform",
+  "description": "CaoTrangAI — AI Content Creation Platform",
   "private": true,
   "scripts": {
     "start": "node server/index.js",

@@ -55,7 +55,7 @@ app.use((err, req, res, next) => {
 
 // ── Start ──────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`🚀 Trạm Sáng Tạo running at http://localhost:${PORT}`);
+  console.log(`🚀 CaoTrangAI running at http://localhost:${PORT}`);
 });
 
 module.exports = app;

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const db = require('../db');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'tramsangtao-secret-key-change-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || 'caotrangai-secret-key-change-in-production';
 
 function generateToken(user) {
   return jwt.sign(
