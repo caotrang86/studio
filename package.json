@@ -1,11 +1,22 @@
 {
   "name": "studio",
   "version": "1.0.0",
-  "description": "Static site clone of tramsangtao.com",
+  "description": "Trạm Sáng Tạo — AI Content Creation Platform",
   "private": true,
   "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js",
     "test": "jest --coverage",
     "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^11.7.0",
+    "cookie-parser": "^1.4.7",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "jest": "^29.7.0",

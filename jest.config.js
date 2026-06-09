@@ -1,9 +1,8 @@
 module.exports = {
   testEnvironment: 'jsdom',
+  testPathIgnorePatterns: ['/node_modules/', '/server/', '/js/'],
   collectCoverageFrom: [
-    '*.js',
-    '!jest.config.js',
-    '!coverage/**'
+    'clone-enhance.js',
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov']

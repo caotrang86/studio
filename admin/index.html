@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Panel | Trạm Sáng Tạo</title>
+  <link rel="shortcut icon" href="/logo.png">
+  <link rel="icon" href="/logo.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Inter, system-ui, -apple-system, sans-serif; background: #0C1117; color: #e2e8f0; }
+    a { color: #22d3ee; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .admin-layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 240px;
+      background: #0f1419;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      padding: 20px 0;
+      flex-shrink: 0;
+    }
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 20px;
+      margin-bottom: 30px;
+      text-decoration: none;
+      color: #fff;
+    }
+    .sidebar-logo img { width: 28px; height: 28px; }
+    .sidebar-logo span { font-size: 16px; font-weight: 700; }
+    .sidebar-badge {
+      font-size: 10px;
+      background: #22d3ee;
+      color: #000;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .sidebar nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      color: #94a3b8;
+      font-size: 14px;
+      transition: all 0.15s;
+      text-decoration: none;
+    }
+    .sidebar nav a:hover, .sidebar nav a.active {
+      background: rgba(34, 211, 238, 0.08);
+      color: #22d3ee;
+    }
+
+    .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+    .page-title { font-size: 24px; font-weight: 700; margin-bottom: 24px; }
+
+    /* Stats cards */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 30px; }
+    .stat-card {
+      background: #151b23;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .stat-card .label { font-size: 13px; color: #64748b; margin-bottom: 4px; }
+    .stat-card .value { font-size: 28px; font-weight: 700; color: #fff; }
+    .stat-card .sub { font-size: 12px; color: #22d3ee; margin-top: 4px; }
+
+    /* Tables */
+    .card {
+      background: #151b23;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .card-header h2 { font-size: 16px; font-weight: 600; }
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; padding: 10px 16px; font-size: 12px; color: #64748b; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .badge-admin { background: rgba(34, 211, 238, 0.15); color: #22d3ee; }
+    .badge-user { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
+    .badge-active { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+    .badge-inactive { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: transparent;
+      color: #cbd5e1;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-sm:hover { background: rgba(255,255,255,0.05); color: #fff; }
+
+    .search-input {
+      padding: 8px 14px;
+      background: #1a1f2e;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      width: 260px;
+    }
+    .search-input:focus { border-color: #22d3ee; }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #1a1f2e;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 28px;
+      width: 100%;
+      max-width: 440px;
+    }
+    .modal h3 { font-size: 18px; font-weight: 600; margin-bottom: 20px; }
+    .modal .form-group { margin-bottom: 14px; }
+    .modal .form-group label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 4px; }
+    .modal .form-group input, .modal .form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      background: #151b23;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+    .btn-cancel { padding: 10px 20px; background: transparent; border: 1px solid rgba(255,255,255,0.15); color: #94a3b8; border-radius: 8px; cursor: pointer; }
+    .btn-save { padding: 10px 20px; background: #22d3ee; border: none; color: #000; font-weight: 600; border-radius: 8px; cursor: pointer; }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 0; margin-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .tab-btn {
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: #64748b;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tab-btn.active { color: #22d3ee; border-bottom-color: #22d3ee; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="sidebar">
+      <a href="/" class="sidebar-logo">
+        <img src="/icon.png" alt="">
+        <span>Trạm Sáng Tạo</span>
+        <span class="sidebar-badge">ADMIN</span>
+      </a>
+      <nav>
+        <a href="#dashboard" class="active" onclick="showTab('dashboard')">Dashboard</a>
+        <a href="#users" onclick="showTab('users')">Người dùng</a>
+        <a href="#jobs" onclick="showTab('jobs')">Lịch sử xử lý</a>
+        <a href="/" style="margin-top: 20px; opacity: 0.6;">← Về trang chủ</a>
+      </nav>
+    </aside>
+
+    <div class="main-content">
+      <h1 class="page-title">Admin Panel</h1>
+
+      <!-- Dashboard Tab -->
+      <div id="tab-dashboard" class="tab-content active">
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-card"><div class="label">Tổng người dùng</div><div class="value" id="stat-users">—</div><div class="sub" id="stat-today-reg">Hôm nay: —</div></div>
+          <div class="stat-card"><div class="label">Users đang hoạt động</div><div class="value" id="stat-active">—</div></div>
+          <div class="stat-card"><div class="label">Tổng lượt xử lý</div><div class="value" id="stat-jobs">—</div><div class="sub" id="stat-today-jobs">Hôm nay: —</div></div>
+          <div class="stat-card"><div class="label">Credits đã sử dụng</div><div class="value" id="stat-credits">—</div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h2>Apps phổ biến nhất</h2></div>
+          <table>
+            <thead><tr><th>App</th><th>Lượt sử dụng</th></tr></thead>
+            <tbody id="popular-apps-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Users Tab -->
+      <div id="tab-users" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <h2>Quản lý người dùng</h2>
+            <input type="text" class="search-input" placeholder="Tìm kiếm theo email, tên..." id="user-search" oninput="searchUsers()">
+          </div>
+          <table>
+            <thead><tr><th>Tên</th><th>Email</th><th>Role</th><th>Credits</th><th>Trạng thái</th><th>Ngày tạo</th><th></th></tr></thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Jobs Tab -->
+      <div id="tab-jobs" class="tab-content">
+        <div class="card">
+          <div class="card-header"><h2>Lịch sử xử lý AI</h2></div>
+          <table>
+            <thead><tr><th>User</th><th>App</th><th>Trạng thái</th><th>Credits</th><th>Thời gian</th></tr></thead>
+            <tbody id="jobs-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit User Modal -->
+  <div class="modal-overlay" id="edit-modal">
+    <div class="modal">
+      <h3>Chỉnh sửa người dùng</h3>
+      <input type="hidden" id="edit-user-id">
+      <div class="form-group">
+        <label>Tên</label>
+        <input type="text" id="edit-name">
+      </div>
+      <div class="form-group">
+        <label>Role</label>
+        <select id="edit-role"><option value="user">User</option><option value="admin">Admin</option></select>
+      </div>
+      <div class="form-group">
+        <label>Credits</label>
+        <input type="number" id="edit-credits" min="0">
+      </div>
+      <div class="form-group">
+        <label>Trạng thái</label>
+        <select id="edit-active"><option value="1">Hoạt động</option><option value="0">Bị khóa</option></select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Hủy</button>
+        <button class="btn-save" onclick="saveUser()">Lưu</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check auth
+    fetch('/api/auth/me', { credentials: 'same-origin' })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (!d.user || d.user.role !== 'admin') {
+          window.location.href = '/login';
+        }
+      })
+      .catch(function() { window.location.href = '/login'; });
+
+    function api(method, url, body) {
+      return fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: body ? JSON.stringify(body) : undefined,
+      }).then(function(r) { return r.json(); });
+    }
+
+    // Tabs
+    function showTab(tab) {
+      document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
+      document.getElementById('tab-' + tab).classList.add('active');
+      document.querySelectorAll('.sidebar nav a').forEach(function(a) { a.classList.remove('active'); });
+      document.querySelector('.sidebar nav a[href="#' + tab + '"]').classList.add('active');
+      if (tab === 'dashboard') loadStats();
+      if (tab === 'users') loadUsers();
+      if (tab === 'jobs') loadJobs();
+    }
+
+    // Dashboard
+    function loadStats() {
+      api('GET', '/api/admin/stats').then(function(d) {
+        document.getElementById('stat-users').textContent = d.total_users;
+        document.getElementById('stat-active').textContent = d.active_users;
+        document.getElementById('stat-jobs').textContent = d.total_jobs;
+        document.getElementById('stat-credits').textContent = d.total_credits_used.toLocaleString();
+        document.getElementById('stat-today-reg').textContent = 'Hôm nay: +' + d.today_registrations;
+        document.getElementById('stat-today-jobs').textContent = 'Hôm nay: ' + d.today_jobs;
+
+        var tbody = document.getElementById('popular-apps-body');
+        tbody.innerHTML = d.popular_apps.map(function(a) {
+          return '<tr><td>' + a.app_slug + '</td><td>' + a.count + '</td></tr>';
+        }).join('') || '<tr><td colspan="2" style="color:#64748b">Chưa có dữ liệu</td></tr>';
+      });
+    }
+
+    // Users
+    var userSearchTimeout;
+    function searchUsers() {
+      clearTimeout(userSearchTimeout);
+      userSearchTimeout = setTimeout(function() { loadUsers(); }, 300);
+    }
+
+    function loadUsers(page) {
+      page = page || 1;
+      var search = document.getElementById('user-search').value;
+      api('GET', '/api/admin/users?page=' + page + '&search=' + encodeURIComponent(search)).then(function(d) {
+        var tbody = document.getElementById('users-tbody');
+        tbody.innerHTML = d.users.map(function(u) {
+          return '<tr>' +
+            '<td>' + u.name + '</td>' +
+            '<td>' + u.email + '</td>' +
+            '<td><span class="badge badge-' + u.role + '">' + u.role + '</span></td>' +
+            '<td>' + u.credits + '</td>' +
+            '<td><span class="badge ' + (u.is_active ? 'badge-active' : 'badge-inactive') + '">' + (u.is_active ? 'Hoạt động' : 'Bị khóa') + '</span></td>' +
+            '<td>' + new Date(u.created_at).toLocaleDateString('vi-VN') + '</td>' +
+            '<td><button class="btn-sm" onclick="editUser(\'' + u.id + '\',\'' + u.name.replace(/'/g, "\\'") + '\',\'' + u.role + '\',' + u.credits + ',' + u.is_active + ')">Sửa</button></td>' +
+            '</tr>';
+        }).join('') || '<tr><td colspan="7" style="color:#64748b">Không có kết quả</td></tr>';
+      });
+    }
+
+    function editUser(id, name, role, credits, active) {
+      document.getElementById('edit-user-id').value = id;
+      document.getElementById('edit-name').value = name;
+      document.getElementById('edit-role').value = role;
+      document.getElementById('edit-credits').value = credits;
+      document.getElementById('edit-active').value = active ? '1' : '0';
+      document.getElementById('edit-modal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('edit-modal').classList.remove('open');
+    }
+
+    function saveUser() {
+      var id = document.getElementById('edit-user-id').value;
+      api('PUT', '/api/admin/users/' + id, {
+        name: document.getElementById('edit-name').value,
+        role: document.getElementById('edit-role').value,
+        credits: parseInt(document.getElementById('edit-credits').value),
+        is_active: document.getElementById('edit-active').value === '1',
+      }).then(function() {
+        closeModal();
+        loadUsers();
+      });
+    }
+
+    // Jobs
+    function loadJobs(page) {
+      page = page || 1;
+      api('GET', '/api/admin/jobs?page=' + page).then(function(d) {
+        var tbody = document.getElementById('jobs-tbody');
+        tbody.innerHTML = d.jobs.map(function(j) {
+          return '<tr>' +
+            '<td>' + (j.user_name || j.user_email) + '</td>' +
+            '<td>' + j.app_slug + '</td>' +
+            '<td>' + j.status + '</td>' +
+            '<td>' + j.credits_used + '</td>' +
+            '<td>' + new Date(j.created_at).toLocaleString('vi-VN') + '</td>' +
+            '</tr>';
+        }).join('') || '<tr><td colspan="5" style="color:#64748b">Chưa có lịch sử</td></tr>';
+      });
+    }
+
+    // Init
+    loadStats();
+  </script>
+</body>
+</html>
